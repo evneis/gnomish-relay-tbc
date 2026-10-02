@@ -20,10 +20,10 @@ use crate::wsl;
 pub const ADDON: &str = "GnomishRelay";
 pub const TIMEWAYS: &str = "Timeways";
 pub const KEY_FILE: &str = "Key.lua";
-/// The `## Interface` of every addon that the desktop app writes: the Forever client.
-pub const INTERFACE: &str = "16001";
+/// The `## Interface` of every addon that the desktop app writes: the TBC Anniversary client.
+pub const INTERFACE: &str = "20506";
 
-const GAME: &str = "_classic_beta_";
+const GAME: &str = "_anniversary_";
 const WOW: &str = "World of Warcraft";
 const PRODUCT_DB: [&str; 4] = ["ProgramData", "Battle.net", "Agent", "product.db"];
 
@@ -55,7 +55,7 @@ pub fn addons_dir(game: &Path) -> PathBuf {
     child_any_case(&interface, "AddOns").unwrap_or_else(|| interface.join("AddOns"))
 }
 
-/// The `_classic_beta_` folder of a folder that the user gives: that folder, or the
+/// The `_anniversary_` folder of a folder that the user gives: that folder, or the
 /// one inside it. A dragged path comes with quotes.
 pub fn game_folder(given: &str) -> PathBuf {
     game_folder_under(given, windows_root())
@@ -158,7 +158,7 @@ fn wine_prefixes(home: &Path) -> Vec<PathBuf> {
     prefixes
 }
 
-/// Every WoW Forever folder that setup can find: the default install places and
+/// Every TBC Anniversary folder that setup can find: the default install places and
 /// the paths in Battle.net's `product.db`.
 pub fn find_games(home: &Path) -> Vec<PathBuf> {
     let mut installs: Vec<PathBuf> = Vec::new();
@@ -693,7 +693,7 @@ mod tests {
     fn product_db_finds_a_game_on_another_drive_of_a_bottle() {
         let home = tempfile::tempdir().unwrap();
         let bottle = home.path().join(".local/share/bottles/bottles/wow");
-        let game = bottle.join("dosdevices/d:/Games/World of Warcraft/_classic_beta_");
+        let game = bottle.join("dosdevices/d:/Games/World of Warcraft/_anniversary_");
         fs::create_dir_all(&game).unwrap();
         let db_dir = bottle.join("drive_c/ProgramData/Battle.net/Agent");
         fs::create_dir_all(&db_dir).unwrap();

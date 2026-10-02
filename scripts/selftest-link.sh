@@ -5,13 +5,13 @@
 # `--remove` takes the links out of the game again.
 set -euo pipefail
 root=$(git rev-parse --show-toplevel)
-wow=${WOW_DIR:-$HOME/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_}
+wow=${WOW_DIR:-$HOME/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_anniversary_}
 addons="$wow/Interface/AddOns"
 folders=(GnomishRelaySelfTest GnomishRelaySelfTest_Slot GnomishRelaySelfTest_Off GnomishRelaySelfTest_Old)
 shared=(Sha256.lua Codec.lua Saved.lua Health.lua Strip.lua)
 
 if [ ! -d "$addons" ]; then
-  echo "error: $addons not found. Set WOW_DIR to the _classic_beta_ folder." >&2
+  echo "error: $addons not found. Set WOW_DIR to the _anniversary_ folder." >&2
   exit 1
 fi
 

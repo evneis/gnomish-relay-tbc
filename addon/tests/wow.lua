@@ -120,7 +120,7 @@ Object.__index = function(o, key)
 		return nil
 	end
 	if not rawget(o, "names")[key] then
-		error(string.format("%s has no %s in WoW Forever %s", o.template or o.kind, key, api.build), 2)
+		error(string.format("%s has no %s in WoW TBC Anniversary %s", o.template or o.kind, key, api.build), 2)
 	end
 	return methods[key] or Nothing
 end

@@ -106,7 +106,7 @@ fn lua_vector(dir: &std::path::Path, frame_id: u16, payload: &[u8]) -> Vector {
 
 fn write_manifest(dir: &std::path::Path, vectors: Vec<Vector>) {
     let manifest = Manifest {
-        build: "1.60.1.70009".into(),
+        build: "2.5.6.69795".into(),
         key: hex(TEST_KEY),
         vectors,
     };
@@ -141,7 +141,7 @@ fn a_manifest_with_another_key_is_refused() {
     let dir = tempfile::tempdir().unwrap();
     let vector = lua_vector(dir.path(), 1, b"payload");
     let manifest = Manifest {
-        build: "1.60.1.70009".into(),
+        build: "2.5.6.69795".into(),
         key: hex(b"0123456789abcdef0123456789abcdef"),
         vectors: vec![vector],
     };

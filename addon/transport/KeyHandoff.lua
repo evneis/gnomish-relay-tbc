@@ -42,9 +42,9 @@ function KeyHandoff.Take()
 	return Bytes(hex)
 end
 
--- Nobody has tested LoadAddOn during the file load of another addon in the Forever
--- client. So the app tries again at its ADDON_LOADED and at PLAYER_LOGIN. The first key
--- wins, and each try clears the global in the same call that reads it.
+-- Nobody has tested LoadAddOn during the file load of another addon in the TBC
+-- Anniversary client. So the app tries again at its ADDON_LOADED and at PLAYER_LOGIN.
+-- The first key wins, and each try clears the global in the same call that reads it.
 function KeyHandoff.Try(step)
 	if ns.key then
 		return

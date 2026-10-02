@@ -309,7 +309,7 @@ pub fn collect(game: &Path, repo: &Path) -> Result<Collected> {
     )?;
     let fixtures = repo.join("tests").join("fixtures");
     fs::create_dir_all(&fixtures)?;
-    let path = fixtures.join(format!("forever-{}.json", fixture.build));
+    let path = fixtures.join(format!("anniversary-{}.json", fixture.build));
     fs::write(&path, serde_json::to_string_pretty(&fixture)? + "\n")?;
     let _ = fs::remove_file(fixtures.join(PLACEHOLDER));
     let dir = repo.join("tests").join("vectors").join(&fixture.build);

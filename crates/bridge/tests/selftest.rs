@@ -268,7 +268,7 @@ fn after_a_reload_the_results_make_a_fixture_that_the_fake_game_can_read() {
     let fixture = fixture::build(&parts.results, &parts.load, None, true).unwrap();
 
     assert!(!fixture.placeholder);
-    assert_eq!(fixture.build, "1.60.1.70009");
+    assert_eq!(fixture.build, "2.5.6.69795");
     // The self-test in the fake game measures the fake game itself. The test fires
     // PLAYER_ENTERING_WORLD after the login events of the fixture.
     let expected = measured();
@@ -352,18 +352,18 @@ fn collect_writes_the_fixture_and_a_golden_vector_for_each_strip() {
 
     let collected = selftest::collect(game_dir.path(), repo.path()).unwrap();
 
-    assert_eq!(collected.build, "1.60.1.70009");
+    assert_eq!(collected.build, "2.5.6.69795");
     assert_eq!(collected.vectors, 14);
     assert!(collected.missing.is_empty(), "{:?}", collected.missing);
     let fixtures = repo.path().join("tests").join("fixtures");
     assert!(!fixtures.join(PLACEHOLDER).exists());
     let written = fixture::read(&fixture::newest(&fixtures).unwrap()).unwrap();
-    assert_eq!(written.build, "1.60.1.70009");
+    assert_eq!(written.build, "2.5.6.69795");
     let vectors = repo
         .path()
         .join("tests")
         .join("vectors")
-        .join("1.60.1.70009");
+        .join("2.5.6.69795");
     assert_eq!(vectors::check_all(&vectors).unwrap(), 14);
     assert_eq!(fs::read(vectors.join(SAVED_FILE)).unwrap(), saved);
 }

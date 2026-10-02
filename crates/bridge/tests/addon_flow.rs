@@ -2707,7 +2707,7 @@ fn the_fake_game_refuses_what_the_client_does_not_have() {
 
     let removed = call("CreateFrame('Frame'):SetBackdrop({})").unwrap_err();
     assert!(
-        removed.contains("Frame has no SetBackdrop in WoW Forever"),
+        removed.contains("Frame has no SetBackdrop in WoW TBC Anniversary"),
         "{removed}"
     );
     assert!(call("SetPortraitToTexture(nil, '')").is_err());
@@ -2732,7 +2732,7 @@ fn a_client_without_a_required_function_turns_the_relay_off() {
 }
 
 #[test]
-fn every_required_function_is_in_the_forever_api() {
+fn every_required_function_is_in_the_anniversary_api() {
     let game = Game::start();
     let api: Table = game
         .lua
@@ -2763,7 +2763,7 @@ fn a_strip_reports_the_build_and_the_health_of_both_channels() {
     game.advance(1.0);
 
     let f = flags(&game.last_strip()[0]);
-    for flag in ["build=70009", "out=shot", "in=slots", "ver=1"] {
+    for flag in ["build=69795", "out=shot", "in=slots", "ver=1"] {
         assert!(f.contains(&flag.into()), "{f:?}");
     }
 }

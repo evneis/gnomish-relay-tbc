@@ -5,11 +5,11 @@
 # WoW finds addons only at launch, so run this with the game closed.
 set -euo pipefail
 root=$(git rev-parse --show-toplevel)
-wow=${WOW_DIR:-$HOME/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_}
+wow=${WOW_DIR:-$HOME/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_anniversary_}
 addons="$wow/Interface/AddOns"
 
 if [ ! -d "$addons" ]; then
-  echo "error: $addons not found. Set WOW_DIR to the _classic_beta_ folder." >&2
+  echo "error: $addons not found. Set WOW_DIR to the _anniversary_ folder." >&2
   exit 1
 fi
 

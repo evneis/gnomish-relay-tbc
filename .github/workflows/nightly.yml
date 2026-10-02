@@ -1,4 +1,4 @@
-# The long fuzz run (SPEC 14.4), and the check for a new WoW Forever client (SPEC 7.8).
+# The long fuzz run (SPEC 14.4), and the check for a new WoW TBC Anniversary client (SPEC 7.8).
 name: nightly
 
 on:
@@ -41,7 +41,7 @@ jobs:
           path: fuzz/artifacts
 
   # Blizzard patches the client without notice. This job checks the addon against
-  # the newest `forever` branch of both API sources, and opens an issue on a change.
+  # the newest `classic_anniversary` branch of both API sources, and opens an issue on a change.
   wow-api:
     runs-on: ubuntu-latest
     permissions:
@@ -62,7 +62,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          title="The WoW Forever API changed"
+          title="The WoW TBC Anniversary API changed"
           if [ -z "$(gh issue list --state open --search "\"$title\" in:title" --json number -q '.[].number')" ]; then
             gh issue create --title "$title" --body "The nightly API check failed: $RUN. Update the pinned commits in scripts/wow-api.sh, run it, and fix what breaks. The diff of addon/tests/api-signatures.lua names each changed argument, return, or secret flag."
           fi

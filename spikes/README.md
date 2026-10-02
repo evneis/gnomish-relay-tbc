@@ -9,7 +9,7 @@ Small test addons. Their results decide the transport design (SPEC.md section 15
 | `GRSpikeSize` | How long does the game stall when it loads a big slot body? |
 
 `spike.py` installs the addons, changes the test files, reads the screenshot, and prints the saved results.
-If the game is not in the default Lutris prefix, set `WOW_DIR` to the `_classic_beta_` folder.
+If the game is not in the default Lutris prefix, set `WOW_DIR` to the `_anniversary_` folder.
 
 ## Procedure
 
@@ -79,7 +79,7 @@ of a slot body (SPEC.md 7.3, S12). The limit is now 1 MB.
 
 ## Results
 
-Run on 2026-09-23. Arch Linux, Wine 11.17 (Staging), client 1.60.1.69977, window 1280×720.
+Run on 2026-09-23. Arch Linux, Wine 11.17 (Staging), WoW: Forever client 1.60.1.69977, window 1280×720. Nobody has run the spikes on TBC Anniversary yet: run them again before you trust these results.
 
 | Check | Result |
 |---|---|

@@ -342,7 +342,7 @@ fn config_of(home: &std::path::Path) -> String {
 /// A WoW install in a Wine prefix, last played `age` seconds ago.
 #[cfg(target_os = "linux")]
 fn game_played(prefix: &std::path::Path, age: u64) -> std::path::PathBuf {
-    let game = prefix.join("drive_c/Program Files (x86)/World of Warcraft/_classic_beta_");
+    let game = prefix.join("drive_c/Program Files (x86)/World of Warcraft/_anniversary_");
     std::fs::create_dir_all(game.join("WTF")).unwrap();
     let saved = game.join("WTF/Config.wtf");
     std::fs::write(&saved, "SET x 1\n").unwrap();

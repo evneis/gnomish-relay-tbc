@@ -7,7 +7,7 @@ Draft 4 makes the spec match the code where they disagreed, and marks the parts 
 
 ## 1. Summary
 
-Gnomish Relay connects AI coding agents to World of Warcraft: Forever.
+Gnomish Relay connects AI coding agents to World of Warcraft Classic: TBC Anniversary.
 You send a task from a chat window in the game. The agent does the work on your computer.
 The reply comes back into the game with a whisper sound.
 
@@ -32,7 +32,7 @@ Gnomish Relay has two parts:
 
 - Automation of gameplay. The addon never acts in the game for the player.
 - Compatibility with `wow-claude` on the wire. Gnomish Relay has its own magic bytes and version byte.
-- Other WoW versions. The first target is WoW: Forever only.
+- Other WoW versions. The target is WoW Classic: TBC Anniversary only. It was WoW: Forever until 2026-10-02. The spikes and the file-load rules (7.2) come from Forever, so the self-test (14.3) must run once on TBC Anniversary.
 - A hosted service. Everything runs on the local machine.
 
 ## 4. Prior work and credits
@@ -719,7 +719,7 @@ Signals (7.4) do not work on the tested client.
 ### 7.1 Strip: game to bridge
 
 The addon draws a strip in the top-left corner of the screen. The line of 7.1.3 is its smallest form.
-Then the addon calls `Screenshot()` from a timer. WoW saves a PNG in `_classic_beta_/Screenshots`.
+Then the addon calls `Screenshot()` from a timer. WoW saves a PNG in `_anniversary_/Screenshots`.
 The bridge watches that folder, decodes the strip, and deletes the file.
 
 The spike proved this path (2026-09-23): the call takes under 1 ms, the file arrives after about 0.4 s, and every color is exact.
@@ -874,7 +874,7 @@ The table is in the order of preference: all 1-pixel modes come first, because t
 
 **The addon draws it.**
 
-- The strip frame ignores the parent scale and has the scale `768 / h`, where `h` is the height from `GetPhysicalScreenSize()`. So one UI unit is one physical pixel. `PixelUtil.GetPixelToUIUnitFactor` of the Forever client computes the same factor. The addon does not call `PixelUtil`: the formula is one line, and it has no second use.
+- The strip frame ignores the parent scale and has the scale `768 / h`, where `h` is the height from `GetPhysicalScreenSize()`. So one UI unit is one physical pixel. `PixelUtil.GetPixelToUIUnitFactor` of the TBC Anniversary client computes the same factor. The addon does not call `PixelUtil`: the formula is one line, and it has no second use.
 - Each cell is a texture of `size × size` units at a whole-unit offset, with `SetColorTexture(r / 255, g / 255, b / 255)` and `SetSnapToPixelGrid(true)`. The snap rounds a float error of the scale to the nearest pixel.
 
 **The reader.** For each cell size, 1 and then 2, the reader reads the 10 marker cells at the top-left corner. It reads cell `c` of row `r` at pixel `(c × size + size / 2, r × size + size / 2)`, with integer division. The marker must match exactly, and the mode must have this cell size. Then the check must read back exactly. A channel value `v` reads as level `round(v × (2^k − 1) / 255)`. Then the reader reads the frame from the rest of the rows, and the frame must decode (7.1). With no line, the reader searches the grid of the old strip, as before.
@@ -977,7 +977,7 @@ Writing all 1000 slots at every publish costs too much disk: a 20 KB body every 
 
 Each slot is a folder `GnomishRelay_S0001` to `GnomishRelay_S1000` with four files:
 
-- `GnomishRelay_SNNNN.toc`: `## Interface: 16001`, a grey `## Title` ("Gnomish Relay reply slot NNNN (leave on)"), `## LoadOnDemand: 1`, `## Dependencies: GnomishRelay`, and the three Lua file names. The AddOns list of the game shows all 1000 slots, so the title says what they are and that the player leaves them on.
+- `GnomishRelay_SNNNN.toc`: `## Interface: 20506`, a grey `## Title` ("Gnomish Relay reply slot NNNN (leave on)"), `## LoadOnDemand: 1`, `## Dependencies: GnomishRelay`, and the three Lua file names. The AddOns list of the game shows all 1000 slots, so the title says what they are and that the player leaves them on.
 - `Inbox.lua`: the body.
 - `Restore.lua`: the restore bundle (7.6). With no restore, its token is empty, and no addon takes it.
 - `Live.lua`: the progress lines of each run, and the permission requests for the game (9.3, S20, S21).
@@ -1079,10 +1079,10 @@ An addon app such as CurseForge replaces the whole folder of an addon at each up
 | Relay | `GnomishRelay_Key` | `GnomishRelayKey` | `App.lua` names both. `KeyHandoff.lua` (shared) takes the key. |
 | Timeways | `Timeways_Key` | `TimewaysKey` | The same, in the Timeways repo. |
 
-- The key addon holds two files. `<name>.toc` has `## Interface: 16001`, a grey `## Title` ("Gnomish Relay key (leave on)"), a `## Notes` line, `## LoadOnDemand: 1`, and `Key.lua`. It has no `## Dependencies`. `Key.lua` is one line: `GnomishRelayKey = "<64 hex digits>"`. The desktop app writes it only from a key of 64 hex digits, with mode 0600, in a folder with mode 0700, and never through a link.
+- The key addon holds two files. `<name>.toc` has `## Interface: 20506`, a grey `## Title` ("Gnomish Relay key (leave on)"), a `## Notes` line, `## LoadOnDemand: 1`, and `Key.lua`. It has no `## Dependencies`. `Key.lua` is one line: `GnomishRelayKey = "<64 hex digits>"`. The desktop app writes it only from a key of 64 hex digits, with mode 0600, in a folder with mode 0700, and never through a link.
 - The app addon lists `KeyHandoff.lua` right after `App.lua`, before each file that reads `ns.key`. `KeyHandoff.lua` calls `C_AddOns.EnableAddOn` and `C_AddOns.LoadAddOn` for the key addon. On the next line it reads the global with `rawget` and sets it to nil with `rawset`. It keeps the key in `ns.key` only when the value is a string of 64 hex digits.
 - The desktop app writes the key addon and the slots. It never writes the relay addon `GnomishRelay`: players get it only from CurseForge (11.3). The CurseForge app manages only that folder. So an update of the addon never removes a key or a slot.
-- **Three tries** (asked for on 2026-09-30, before any test in the real game). Nobody has checked that `LoadAddOn` of a load-on-demand addon works during the file load of another addon in the Forever client. So `KeyHandoff.Try` runs at the file load, again in the `ADDON_LOADED` of the app, and again at `PLAYER_LOGIN`. A try runs only while the app has no key, and the first key wins. Each try reads the global and clears it in the same call. The two later tries widen the exposure below: see the last point of it. Only when all three fail does the app have no key. `/relay diag` shows "Gnomish Relay: key loaded at <step>": `file load`, `ADDON_LOADED`, or `PLAYER_LOGIN`. With no key, `/relay diag` shows only the login line of the first-run window: it says what to do next.
+- **Three tries** (asked for on 2026-09-30, before any test in the real game). Nobody has checked that `LoadAddOn` of a load-on-demand addon works during the file load of another addon in the TBC Anniversary client. So `KeyHandoff.Try` runs at the file load, again in the `ADDON_LOADED` of the app, and again at `PLAYER_LOGIN`. A try runs only while the app has no key, and the first key wins. Each try reads the global and clears it in the same call. The two later tries widen the exposure below: see the last point of it. Only when all three fail does the app have no key. `/relay diag` shows "Gnomish Relay: key loaded at <step>": `file load`, `ADDON_LOADED`, or `PLAYER_LOGIN`. With no key, `/relay diag` shows only the login line of the first-run window: it says what to do next.
 - **Why load on demand, and not `## OptionalDeps`.** With `## OptionalDeps: GnomishRelay_Key`, WoW loads the key addon before the relay at login. But the key addon then also loads when the relay is off or fails, and its global stays for the whole UI session. A load-on-demand addon runs only when code calls `LoadAddOn`, and only once in a UI session: a second `LoadAddOn` runs no file.
 - **The exposure.** The global exists from the `Key.lua` of the key addon to the line after `LoadAddOn`. In that time, only code that the load runs can read it. At the file load, that is the `ADDON_LOADED` handlers of the addons that loaded before the relay. An addon that loaded earlier can also call `LoadAddOn` for the key addon first and take the global, or put a metatable on `_G`. The relay then has no key, and shows the first-run window. When the try at the file load works, an addon that loads after the relay finds no global, and cannot load the key addon again. This is the bound of the known leak of 6.5: an addon that loads first can already replace `string.char` or `tonumber` and read the key. The key is a check against programs outside the game, not against other addons (6.6.1), and a call to our handlers from any addon gets no more than a typed message (6.1). So the try at the file load adds no reader that the old `Key.lua` did not have. When that try fails, the later tries give every addon a chance to read the key. An addon that loads after the relay can call `LoadAddOn` for the key addon before the relay tries again. At `PLAYER_LOGIN`, every addon has loaded, and the `ADDON_LOADED` handler of each one runs inside `LoadAddOn` and can read the global. We accept this, because the key is no defense against addons (6.6.1). After the first test in the real game shows which try works, we remove the tries that do not work.
 - **With no key.** The relay starts no transport. At login it prints one line and shows the first-run window, once in each UI session. `/relay`, both key bindings, and `/ai` open the window again. The window has the look of the setup window of Timeways: a rock background with a dialog border, the title "Gnomish Relay Setup", a close button, and a parchment sheet. The sheet holds a heading, one sentence, the install line in an edit box that keeps its text (a click selects all of it), "Click a line and press Ctrl+C to copy it (Cmd+C on a Mac).", and "Run it on your computer. Then restart WoW.". **Close** is below the sheet. A Mac client gets the Terminal line. A Windows client gets the PowerShell line and the Linux line, because Linux players run the Windows client under Wine.
@@ -1200,9 +1200,9 @@ A client patch can break either one. So a patch costs a day of work, not the pro
 - Later: the window shows "New game version: checking the relay" until the self-test passes.
 - A known break goes into a table in the bridge, so the setup can name the channel that works on each build.
 
-**API compliance.** The addon calls only the API of the real Forever client (1.60.1, the Mainline UI code).
+**API compliance.** The addon calls only the API of the real TBC Anniversary client (2.5.6, the `classic_anniversary` UI code).
 
-- `scripts/wow-api.sh` reads two sources at pinned commits: the `forever` branch of Gethe/wow-ui-source (Blizzard's UI code) and of Ketho/BlizzardInterfaceResources (the API that the client reports).
+- `scripts/wow-api.sh` reads two sources at pinned commits: the `classic_anniversary` branch of Gethe/wow-ui-source (Blizzard's UI code) and of Ketho/BlizzardInterfaceResources (the API that the client reports).
 - It checks every WoW name that the addon, `wow.yml`, or the fake game uses. A name that the client does not have, or has only in a `Blizzard_Deprecated` addon, stops it. So does an event that the addon registers and the client does not have. It also checks the `## Interface` number of the TOC against the build.
 - It writes `addon/tests/api.lua`: the used globals, every widget type with its methods, and each used template with its mixin methods and child keys.
 - It writes `addon/tests/api-signatures.lua` from the generated API docs of the client (`Blizzard_APIDocumentationGenerated`). For each used function, each widget method with a called name, and each registered event, it keeps the arguments, the returns, the payload, and every flag: `SecretArguments`, `SecretReturns`, `SecretWhen...`, `HasRestrictions`, `IsProtectedFunction`, and the others. A used function with no doc entry goes into an `undocumented` list, so a new doc entry also shows.
@@ -1214,7 +1214,7 @@ A client patch can break either one. So a patch costs a day of work, not the pro
 ## 8. Architecture
 
 ```
- ┌──────────── WoW: Forever ────────────┐
+ ┌──────── WoW: TBC Anniversary ────────┐
  │  GnomishRelay addon (Lua)            │
  │   chat window, strip, slot loader,   │
  │   signal checks, reload fallback     │
@@ -1746,7 +1746,7 @@ Timeways is a separate story addon (`~/Documents/Code/Personal/timeways`). It us
     - **The model.** `setup --timeways` takes the first model it finds: `claude` on `PATH` (with `claude_model = "haiku"`), then Ollama on 127.0.0.1:11434, then LM Studio on 127.0.0.1:1234. It asks a local server for `/v1/models` with `curl` and the flags of a model call, and takes the first id that is not an embedding model. Another model that it finds goes in as commented lines. With none, `[story]` has no model, and setup offers to install a free local model (11.6). A later `setup --timeways` fills a `[story]` with no model in the same way. It prints "AI model: claude (haiku)", or "AI model: llama3.2:3b on this computer". Why: `claude` is a deliberate install, its answers are better than a small local model, and the budget of decision 10 bounds its use. `curl` is already the only HTTP client of the bridge.
     - **An existing config.** `setup --timeways` adds `[story]` to a config that has none, for a relay user who adds Timeways later. `gnomish-relay setup` adds the relay part to a Timeways config. Each checks every new text with the config loader before it writes. Neither changes a key that exists, except the repair of `default_cwd` (12).
     - **A relay part with an error stops no Timeways setup.** `setup --timeways` checks the parts of the config that it writes: `[wow]` and `[story]`. An error in the relay part (for example an `[agents.<name>]` entry with an unknown kind) is not its job. It sets up Timeways, keeps the relay part as it is, and prints one line: "Gnomish Relay: config.toml has an error, and the desktop app won't start until it's fixed: <error>". A plain setup still stops on such an error, because the relay part is its own.
-    - **`## Group:`** is in neither app's slots. Nothing shows yet that the Forever client reads it. After a test in the game, both apps get it in one commit.
+    - **`## Group:`** is in neither app's slots. Nothing shows yet that the TBC Anniversary client reads it. After a test in the game, both apps get it in one commit.
 16. **Life cycle.** `restart` and `update` also stop and start the story program. The bridge kills its process group when it exits. A story program that crashes starts again after a backoff.
 17. **Versions.** The hello carries the version of each app. A version out of range gets the reply "update the addon". (Step 8, decided with an advisor on 2026-09-26: each message of an app out of range gets one error reply with the text of 7.7. A newer addon of either app gets "Update the desktop app: run gnomish-relay update.", an older Timeways gets "Update Timeways.", and an older relay gets "Update Gnomish Relay in the CurseForge app, then restart WoW." Until 2026-09-30 the bridge wrote the relay addon at each start, so an older relay got a reload text. The range check is the pure function `version_fit` in `protocol`, with unit tests for every edge and a check in the `flags` fuzz target. S30 proves it (14.1), approved by the user on 2026-09-26. Each app sends its own number through `ns.App.version`, because the batch lines of Timeways and the coding flags of the relay change on their own.)
 18. **What the key split protects.** It stops a bug or a hacked story program from reaching the agents through the bridge. It does not stop a hostile addon that loads first from reading either key (6.5).
@@ -2329,7 +2329,7 @@ notices = {busy = 1, open = 2, list = {
 - **The toast.** For a new `waiting` notice: a small frame at the bottom left, above the chat frame, as the Battle.net toast. Its first line is `<Agent> is waiting · <repo>`, and below it at most 2 lines of the text. It goes away after 8 seconds. A click opens the list.
 - **In combat** (`InCombatLockdown`), the chat line shows at once. The toast and the sound wait until combat ends, and then come only for notices that are still in the list.
 
-**The bell.** A round button on the edge of the minimap (parent `Minimap`). It shows only while the list holds a notice, and it glows while a `waiting` notice is in the list. The user can drag it along the edge of the minimap, and the saved variables keep its angle. A click opens the list, and a second click closes it. Changed in the build: the Forever client has no bell texture. The icon is the horn of a minimap event (the atlas `minimap-genericevent-hornicon`, and its `-small` form in the chat line), on the border and the background of a minimap button. The name "the bell" stays.
+**The bell.** A round button on the edge of the minimap (parent `Minimap`). It shows only while the list holds a notice, and it glows while a `waiting` notice is in the list. The user can drag it along the edge of the minimap, and the saved variables keep its angle. A click opens the list, and a second click closes it. Changed in the build: the game has no bell texture. The icon is the horn of a minimap event (the atlas `minimap-genericevent-hornicon`, and its `-small` form in the chat line), on the border and the background of a minimap button. The name "the bell" stays.
 
 **The list frame.** A small frame in the style of a tooltip, below the minimap:
 
@@ -2409,7 +2409,7 @@ Only a few paths change per platform. All other code is shared.
 
 | Part | Linux | Windows | macOS |
 |---|---|---|---|
-| WoW folder | Inside the Wine prefix | `Program Files (x86)\World of Warcraft\_classic_beta_` | `/Applications/World of Warcraft/_classic_beta_` |
+| WoW folder | Inside the Wine prefix | `Program Files (x86)\World of Warcraft\_anniversary_` | `/Applications/World of Warcraft/_anniversary_` |
 | Notifications from hooks (10.2) | A spool folder | A spool folder | A spool folder |
 | Replace a file that the game has open | Rename always works | Rename can fail. Retry with backoff, then log. | Rename always works |
 
@@ -2447,11 +2447,11 @@ The install scripts put the program on `PATH`, also in the open terminal on Wind
 
 **`gnomish-relay setup`** sets up Gnomish Relay. It does every step, and a second run changes nothing that works. `gnomish-relay setup --timeways` sets up Timeways: the same steps for its own files, and the steps of 11.4 and 11.6 (9.7, decision 15). Neither one sets up the other product.
 
-1. **Find the game.** It looks for a `_classic_beta_` folder in the default places and in the install paths of Battle.net's `product.db`:
+1. **Find the game.** It looks for a `_anniversary_` folder in the default places and in the install paths of Battle.net's `product.db`:
    - Windows: `Program Files (x86)\World of Warcraft`, and `%ProgramData%\Battle.net\Agent\product.db`.
    - macOS: `/Applications/World of Warcraft`, and `/Users/Shared/Battle.net/Agent/product.db`.
    - Linux: each Wine prefix (`~/.wine`, `~/Games/*`, Bottles also as a Flatpak, and Steam Proton), with the `product.db` of the prefix. `C:` maps to `drive_c`, and other drives to `dosdevices`.
-   Setup asks no path question. A config with a game folder that exists skips the search, so a choice stays. With more than one, setup takes the one played last: the one whose `WTF` folder holds the newest file (`Config.wtf` and the saved variables, which WoW writes at each logout). It says "Using WoW at <path>. To use another one, run gnomish-relay setup --wow <folder>." With none, setup still does each step that needs no game: the keys, the config with no `[wow]`, and the autostart. It skips the key addons and the slots, and its last line is "WoW not found. Start WoW once, then run gnomish-relay setup." ("Timeways: WoW not found. Start WoW once, then run gnomish-relay setup --timeways." for Timeways). The next setup finds the game, and adds `[wow]` to the config. A desktop app with no `[wow]` prints the same line and ends with success, so the login service does not start it again. So with no game, the autostart only registers the start at login. `status` prints the line after "Config: OK", and `restart` stops with it. `setup --wow <folder>`, or `setup <folder>`, skips the search, and takes the `World of Warcraft` folder or `_classic_beta_`. It also puts that folder into `[wow]` of a config that exists. It makes `Interface/AddOns` if WoW has not made it yet, and it finds that folder in any case.
+   Setup asks no path question. A config with a game folder that exists skips the search, so a choice stays. With more than one, setup takes the one played last: the one whose `WTF` folder holds the newest file (`Config.wtf` and the saved variables, which WoW writes at each logout). It says "Using WoW at <path>. To use another one, run gnomish-relay setup --wow <folder>." With none, setup still does each step that needs no game: the keys, the config with no `[wow]`, and the autostart. It skips the key addons and the slots, and its last line is "WoW not found. Start WoW once, then run gnomish-relay setup." ("Timeways: WoW not found. Start WoW once, then run gnomish-relay setup --timeways." for Timeways). The next setup finds the game, and adds `[wow]` to the config. A desktop app with no `[wow]` prints the same line and ends with success, so the login service does not start it again. So with no game, the autostart only registers the start at login. `status` prints the line after "Config: OK", and `restart` stops with it. `setup --wow <folder>`, or `setup <folder>`, skips the search, and takes the `World of Warcraft` folder or `_anniversary_`. It also puts that folder into `[wow]` of a config that exists. It makes `Interface/AddOns` if WoW has not made it yet, and it finds that folder in any case.
 2. **Make the keys**, 32 random bytes from the OS each, with mode 0600, once: `strip.key` when it is missing, and `timeways.key` only with `--timeways`. A `Timeways` addon folder alone makes no Timeways key. The Timeways key is never equal to the strip key. `--new-key` makes a new key only for the product of this setup (9.7, decision 15), and then its addon needs a `/reload`.
 3. **Write the key addons, and check the relay addon.** A plain setup writes the key addon `GnomishRelay_Key` from the strip key (7.3.2). It deletes an old `Key.lua` in the real folder of `GnomishRelay`, also through a link (a developer checkout, 16). It writes no other file there. Then it finds `GnomishRelay` in any case, and checks its version (7.7):
    - With no folder, setup says "Get the Gnomish Relay addon on CurseForge: https://www.curseforge.com/projects/1719624. Install it with the CurseForge app, then restart WoW." It still makes the slots, the config, and the autostart, so the player can install the addon after.
@@ -2660,13 +2660,13 @@ Native Windows has no sandbox for the commands of Claude (6.6.4, "Windows"). So 
 
 **Tests.** No test can run WSL2: the Windows runners of GitHub have no nested virtualization. Unit tests cover each pure part: the detection from fake `/proc` files and variables, the path mapping, the search of the game under a fake mount root, the `PATH` filter, the text of `wsl-start.sh`, the `Run` entry and the `wsl.exe` arguments, the dialog under WSL with its `WSLENV`, the status line, the read-only drives of the agent wall, and the hidden paths of the Windows home. The manual test below covers the rest.
 
-**Manual test on Windows 11.** Use a Windows 11 computer with WoW Forever, no WSL, and no Gnomish Relay.
+**Manual test on Windows 11.** Use a Windows 11 computer with WoW TBC Anniversary, no WSL, and no Gnomish Relay.
 
 1. In PowerShell, run the one-liner of 11.3 with `-Wsl`. It installs `gnomish-relay.exe` and takes the WSL2 path.
 2. Windows asks for admin rights for `wsl --install`. Click Yes. A second window installs WSL and Ubuntu. The installer says "Restart Windows to finish. The installer continues after you sign in."
 3. Restart and sign in. Ubuntu opens and asks for a new Linux user name and password. Enter them. A PowerShell window opens by itself and goes on with no question about the sandbox. If Ubuntu did not open, the installer says "Set up your Linux user first: ...". Do that, then run the one-liner again.
 4. The installer installs bubblewrap with no password, then Claude Code, then opens `claude`. Log in, then type `/exit`.
-5. `install.sh` runs, and setup prints `WoW: /mnt/c/Program Files (x86)/World of Warcraft/_classic_beta_`, then asks for the folders of the agents. Accept a folder in the Linux home, or type one, for example `~/code`.
+5. `install.sh` runs, and setup prints `WoW: /mnt/c/Program Files (x86)/World of Warcraft/_anniversary_`, then asks for the folders of the agents. Accept a folder in the Linux home, or type one, for example `~/code`.
 6. The last lines show "Sandbox: bwrap", "Agent: claude (Claude Code <version>)", "Desktop app: on, starts at login", "All set. Restart WoW, then type /relay", and "The desktop app runs in WSL2 (Ubuntu)". No console window stays open.
 7. Open Ubuntu from the Start menu and run `gnomish-relay status`. It shows "Desktop app: running (process <pid>)", "Running in WSL2 (distro Ubuntu)", and "Sandbox: bwrap".
 8. Start WoW, type `/relay`, and send "hi". The reply comes.
@@ -2775,7 +2775,7 @@ local_model = "llama3.2"
 
 ```toml
 [wow]
-path = "~/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_"
+path = "~/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_anniversary_"
 
 [story]
 model = "claude"
@@ -2846,7 +2846,7 @@ allow_full_auto = true        # false: no chat runs at full-auto (9.3)
 default_agent = "claude"
 
 [wow]
-path = "~/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_"
+path = "~/Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_anniversary_"
 
 [agents.claude]
 kind = "claude"
@@ -2915,7 +2915,7 @@ The mockup is the reference for the layout.
   - Enter clears the focus, so the keys of the game work again, and the bar stays for Previous and Next. Escape in the box, or Close, closes the bar and removes the band. A change of chat closes it too.
   - The bar takes the row above the input, and while it is open it comes before the "Reload soon" banner too: the player asked for it.
 - **The row above the input** holds the search bar, the "Reload soon" banner, or the byte counter of the input. While none of them shows, the transcript takes the row, and it keeps its newest line in view when the row comes and goes.
-  - **No Ctrl+F of the window.** A window of WoW has no keyboard focus. To see Ctrl+F, a frame needs `EnableKeyboard` and `SetPropagateKeyboardInput`. The game restricts `SetPropagateKeyboardInput` in combat (`HasRestrictions` in the API documentation of the Forever client). A frame that holds the keyboard in combat then eats every key, also the move keys. So the addon never takes the keyboard outside an edit box, and the player can bind Ctrl+F to "Search chat" in the Key Bindings menu.
+  - **No Ctrl+F of the window.** A window of WoW has no keyboard focus. To see Ctrl+F, a frame needs `EnableKeyboard` and `SetPropagateKeyboardInput`. The game restricts `SetPropagateKeyboardInput` in combat (`HasRestrictions` in the API documentation of the TBC Anniversary client). A frame that holds the keyboard in combat then eats every key, also the move keys. So the addon never takes the keyboard outside an edit box, and the player can bind Ctrl+F to "Search chat" in the Key Bindings menu.
 - **Errors:** an error comes from the relay, not from the agent. So it shows as a grey line `[Relay]: Not sent.`, never under the name of the agent. Below it, a blue "Resend" link sends the message again. Before a `/reload`, the addon still holds the text in its private table, so Resend signs it and sends it at once. After a `/reload`, only the saved variables hold the text, and the addon never signs that text (6.6.1). So Resend then puts the text in the input with the focus, and Enter sends it.
 - **Input:** one line, with no label. While it is empty and has no focus, it shows a grey hint: "Type a message, then press Enter." Enter sends, empties the line, and clears the focus, so the keys of the game work again. The limit is the room of one strip: a payload of 3200 bytes (7.1), less the other fields of the record and 440 bytes for the report. That leaves about 2600 bytes of text. With fewer than 400 bytes left, a small counter above the right end says "100 left", and past the limit it says "5 over the limit" in red.
 - **Earlier messages in the input** (asked for by the user on 2026-09-30: "up arrow down arrow in the relay message screen should scroll through historical messages, like in a normal terminal"). The keys work as in bash, zsh, and the chat box of WoW:
@@ -3083,7 +3083,7 @@ The config key `voice` sets what the voice reads:
 - Skip and Stop have keys in the game. The addon sends `voice=skip` or `voice=stop` through the strip, so a key takes about half a second. The desktop has the same two hotkeys, with no delay.
 - A new reply waits until the current one ends, or you skip it.
 - The default engine is a local model (Piper), so no reply text leaves the computer. A cloud voice is an option in the config.
-- The fallback is `C_VoiceChat.SpeakText(voiceID, text, rate, volume)` in the game. It exists in the Forever client and uses the voices of the operating system. Under Wine, the client can have no voices (17).
+- The fallback is `C_VoiceChat.SpeakText(voiceID, text, rate, volume)` in the game. It exists in the TBC Anniversary client and uses the voices of the operating system. Under Wine, the client can have no voices (17).
 - The config turns voice output on per agent. It is off by default.
 
 **Voice input.** You hold a key in the game and talk. The bridge records and transcribes.
@@ -3320,13 +3320,13 @@ The report prints one line for each mode, with the largest error, then the chose
 
 1. It reads `GnomishRelaySelfTest.lua`, the newest one of all accounts, with the limits of `saved.rs`. It refuses results that name another key than the public test key.
 2. It scans the `Screenshots` folder for PNGs from the time of the run. It decodes each one with the real bridge reader and the test key, and keeps a file only when its time, frame id, and payload match a shot. It never takes a path from the saved file.
-3. It writes `tests/fixtures/forever-<build>.json`: the measurements, and the behavior of the fake game that follows from them. It deletes the placeholder fixture.
+3. It writes `tests/fixtures/anniversary-<build>.json`: the measurements, and the behavior of the fake game that follows from them. It deletes the placeholder fixture.
 4. It writes `tests/vectors/<build>/`: each PNG, `manifest.json` with each payload and the key, and the raw saved file, which shows how WoW writes saved variables.
 5. It judges each line mode, prints the report, and writes `strip-line.json` into the data folder of the bridge (7.1.3). This is the only file that it writes outside the repo.
 
 It reads no key and no config of the relay, and it never deletes a screenshot. A running bridge leaves the test strips alone: it checks each strip that fails its keys against the test key, and keeps and logs a test strip.
 
-**The fake game.** The tests load the newest real fixture, or `tests/fixtures/forever-placeholder.json` while none exists. The placeholder holds the guesses of the fake game from before the self-test, and it says so. The fake game takes these values from the fixture: `GetBuildInfo`, the screen size, the delay of the slowest shot, the event of a good shot, when the picture is taken, when "Screen captured" shows, the returns of `LoadAddOn` and `FontString:SetFont`, whether `GetContentHeight` waits for the next frame, whether the saved variables load before or after the files, the login events, the timer order, the `bit` results, and `hooksecurefunc` on a missing global. The addon tests also run the relay in the other behaviors that it depends on: "Screen captured" before and after the event, a picture after the handler, saved variables after the files, a content height in the next frame, a disabled slot with and without a working `EnableAddOn`, an out-of-date slot, and a `hooksecurefunc` that refuses a missing global. A timer order that the fake game has no model for stops it at load. A test also fails when the measured shot delay no longer fits the one-second waits of the addon tests.
+**The fake game.** The tests load the newest real fixture, or `tests/fixtures/anniversary-placeholder.json` while none exists. The placeholder holds the guesses of the fake game from before the self-test, and it says so. The fake game takes these values from the fixture: `GetBuildInfo`, the screen size, the delay of the slowest shot, the event of a good shot, when the picture is taken, when "Screen captured" shows, the returns of `LoadAddOn` and `FontString:SetFont`, whether `GetContentHeight` waits for the next frame, whether the saved variables load before or after the files, the login events, the timer order, the `bit` results, and `hooksecurefunc` on a missing global. The addon tests also run the relay in the other behaviors that it depends on: "Screen captured" before and after the event, a picture after the handler, saved variables after the files, a content height in the next frame, a disabled slot with and without a working `EnableAddOn`, an out-of-date slot, and a `hooksecurefunc` that refuses a missing global. A timer order that the fake game has no model for stops it at load. A test also fails when the measured shot delay no longer fits the one-second waits of the addon tests.
 
 **Tests.** `crates/bridge/tests/golden.rs` decodes every committed vector on all three OSes. It skips with a message only while no real fixture exists. When a real fixture exists, a missing vector folder fails, and so does a placeholder that is still there. `crates/bridge/tests/selftest.rs` runs the self-test addon in the fake game, and collect on what it leaves.
 
@@ -3492,7 +3492,7 @@ Steps 1 to 5 prove the channels. After those, the rest is normal Rust work.
 ## 16. Development environment
 
 - `dev gnomish-relay` opens tmux with nvim, the agent, and a terminal in this folder.
-- Link `addon/GnomishRelay` into `_classic_beta_/Interface/AddOns`. Then an edit plus `/reload` loads the new code, with no copy step. `scripts/dev-link.sh` does this, and also links each file of `addon/transport` into `addon/GnomishRelay`. Git ignores these links. The key addon and the slots are real folders in `AddOns`, never in the repo (7.3.2).
+- Link `addon/GnomishRelay` into `_anniversary_/Interface/AddOns`. Then an edit plus `/reload` loads the new code, with no copy step. `scripts/dev-link.sh` does this, and also links each file of `addon/transport` into `addon/GnomishRelay`. Git ignores these links. The key addon and the slots are real folders in `AddOns`, never in the repo (7.3.2).
 - After each client patch, run the self-test of the game (14.3.1): `scripts/selftest-link.sh`, a login and a `/reload`, then `gnomish-relay selftest collect`. Commit the new fixture and vectors. `scripts/selftest-link.sh --remove` takes the self-test out of the game.
 - Run the bridge in the bottom-right pane.
 - Aeneas and Charon are built in `~/verif`. `proofs/TOOLS` pins their commits, and CI builds the same commits with Nix.

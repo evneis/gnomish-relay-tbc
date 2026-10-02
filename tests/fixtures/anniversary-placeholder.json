@@ -5,10 +5,10 @@
   "note": "NOT MEASURED. These are the guesses of the fake game from before the self-test existed. Run the self-test (SPEC.md 14.3): gnomish-relay selftest collect writes a real fixture and deletes this file.",
   "fake": {
     "build_info": {
-      "version": "1.60.1",
-      "build": "70009",
+      "version": "2.5.6",
+      "build": "69795",
       "date": "Sep 24 2026",
-      "interface": 16001
+      "interface": 20506
     },
     "physical_screen": [1280, 720],
     "shot_delay": 0.4,

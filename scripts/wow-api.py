@@ -1,4 +1,4 @@
-"""Writes the WoW Forever API that an addon uses as two Lua tables.
+"""Writes the WoW TBC Anniversary API that an addon uses as two Lua tables.
 
 Usage: wow-api.py --ui <wow-ui-source> --bir <BlizzardInterfaceResources> --build <build>
        --addon <folder> [--addon <folder>]... [--lint <wow.yml>] [--fake <wow.lua>]
@@ -280,9 +280,9 @@ def lua_list(names, indent):
 
 
 def check_names(used, known, events, known_events):
-    errors = [f"{name} is not in the WoW Forever {build} client" for name in sorted(used - known)]
-    errors += [f"{name} is deprecated in WoW Forever {build}" for name in sorted(used & deprecated())]
-    errors += [f"event {name} is not in the WoW Forever {build} client" for name in sorted(events - known_events)]
+    errors = [f"{name} is not in the WoW TBC Anniversary {build} client" for name in sorted(used - known)]
+    errors += [f"{name} is deprecated in WoW TBC Anniversary {build}" for name in sorted(used & deprecated())]
+    errors += [f"event {name} is not in the WoW TBC Anniversary {build} client" for name in sorted(events - known_events)]
     for error in errors:
         print(f"error: {error}", file=sys.stderr)
     if errors:
@@ -294,7 +294,7 @@ def api_text(used):
     all_templates = templates()
     widget_types = widgets()
     out = [
-        f"-- The WoW Forever {build} API that {', '.join(addon_names())} uses.\n",
+        f"-- The WoW TBC Anniversary {build} API that {', '.join(addon_names())} uses.\n",
         "-- Written by scripts/wow-api.sh. Do not edit.\n",
         "return {\n",
         f'\tbuild = "{build}",\n',
@@ -313,7 +313,7 @@ def api_text(used):
     for name in sorted(used_templates() - set(widget_types)):
         template = all_templates.get(name)
         if template is None:
-            sys.exit(f"error: template {name} is not in the WoW Forever {build} client")
+            sys.exit(f"error: template {name} is not in the WoW TBC Anniversary {build} client")
         out.append(f'\t\t{name} = {{\n\t\t\tbase = "{template["base"]}",\n\t\t\tnames = {{\n')
         out.append(lua_list(template_names(name, all_templates, bases, methods), "\t\t\t\t"))
         out.append("\t\t\t},\n\t\t},\n")
@@ -331,7 +331,7 @@ def signatures_text(used, events, docs, global_api):
     methods = {key for name in used_methods() for key in docs.methods_named(name)}
     documented_events = events & set(docs.events)
     return "".join([
-        f"-- The documented WoW Forever {build} API that {', '.join(addon_names())} uses.\n",
+        f"-- The documented WoW TBC Anniversary {build} API that {', '.join(addon_names())} uses.\n",
         "-- Written by scripts/wow-api.sh from Blizzard_APIDocumentationGenerated. Do not edit.\n",
         "-- A patch can change the arguments, returns, or secret flags and keep the name. The diff shows it.\n",
         "-- The scan does not know the type of each object, so methods has each widget type with a called name.\n",

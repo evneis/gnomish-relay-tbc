@@ -17,7 +17,7 @@ from pathlib import Path
 
 WOW = Path(os.environ.get(
     "WOW_DIR",
-    Path.home() / "Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_",
+    Path.home() / "Games/battlenet/drive_c/Program Files (x86)/World of Warcraft/_anniversary_",
 ))
 ADDONS = WOW / "Interface" / "AddOns"
 HERE = Path(__file__).resolve().parent
@@ -42,14 +42,14 @@ def write(path, data):
 
 
 def slot_addon(name, body):
-    toc = f"## Interface: 16001\n## Title: {name}\n## LoadOnDemand: 1\n## Dependencies: GRSpikeFiles\n\nInbox.lua\n"
+    toc = f"## Interface: 20506\n## Title: {name}\n## LoadOnDemand: 1\n## Dependencies: GRSpikeFiles\n\nInbox.lua\n"
     write(ADDONS / name / f"{name}.toc", toc)
     write(ADDONS / name / "Inbox.lua", body)
 
 
 def install():
     if not WOW.is_dir():
-        sys.exit(f"WoW folder not found: {WOW}\nSet WOW_DIR to the _classic_beta_ folder.")
+        sys.exit(f"WoW folder not found: {WOW}\nSet WOW_DIR to the _anniversary_ folder.")
     ADDONS.mkdir(parents=True, exist_ok=True)
     for name in ("GRSpikeShot", "GRSpikeFiles"):
         shutil.rmtree(ADDONS / name, ignore_errors=True)
@@ -158,12 +158,12 @@ def slot_body(limit):
 
 def sizes():
     if not WOW.is_dir():
-        sys.exit(f"WoW folder not found: {WOW}\nSet WOW_DIR to the _classic_beta_ folder.")
+        sys.exit(f"WoW folder not found: {WOW}\nSet WOW_DIR to the _anniversary_ folder.")
     shutil.rmtree(ADDONS / "GRSpikeSize", ignore_errors=True)
     shutil.copytree(HERE / "addons" / "GRSpikeSize", ADDONS / "GRSpikeSize")
     for label, limit in BODY_SIZES.items():
         name = f"GRSpikeBody{label}"
-        toc = (f"## Interface: 16001\n## Title: {name}\n## LoadOnDemand: 1\n"
+        toc = (f"## Interface: 20506\n## Title: {name}\n## LoadOnDemand: 1\n"
                "## Dependencies: GRSpikeSize\n\nInbox.lua\n")
         write(ADDONS / name / f"{name}.toc", toc)
         write(ADDONS / name / "Inbox.lua", slot_body(limit))

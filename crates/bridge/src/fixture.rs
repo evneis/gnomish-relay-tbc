@@ -12,7 +12,7 @@ use serde_json::Value;
 use crate::vectors::Shot;
 
 pub const FORMAT: u32 = 1;
-pub const PLACEHOLDER: &str = "forever-placeholder.json";
+pub const PLACEHOLDER: &str = "anniversary-placeholder.json";
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Fixture {
@@ -463,7 +463,7 @@ pub fn real_fixtures(dir: &Path) -> Result<Vec<(Vec<u64>, PathBuf)>> {
     for entry in fs::read_dir(dir)?.flatten() {
         let name = entry.file_name().to_string_lossy().into_owned();
         let build = name
-            .strip_prefix("forever-")
+            .strip_prefix("anniversary-")
             .and_then(|n| n.strip_suffix(".json"));
         if let Some(version) = build.and_then(version_parts) {
             found.push((version, entry.path()));
@@ -639,15 +639,15 @@ mod tests {
         assert_eq!(newest(dir.path()).unwrap(), dir.path().join(PLACEHOLDER));
         let names = [
             PLACEHOLDER,
-            "forever-1.60.9.1.json",
-            "forever-1.60.10.1.json",
+            "anniversary-1.60.9.1.json",
+            "anniversary-1.60.10.1.json",
             "notes.json",
         ];
         for name in names {
             fs::write(dir.path().join(name), "{}").unwrap();
         }
         let newest = newest(dir.path()).unwrap();
-        assert_eq!(newest, dir.path().join("forever-1.60.10.1.json"));
+        assert_eq!(newest, dir.path().join("anniversary-1.60.10.1.json"));
         assert_eq!(real_fixtures(dir.path()).unwrap().len(), 2);
     }
 }

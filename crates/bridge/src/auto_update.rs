@@ -240,7 +240,7 @@ mod tests {
     #[test]
     fn a_toc_version_drops_its_v_and_a_placeholder_is_no_version() {
         assert_eq!(
-            toc_version("## Interface: 16001\n## Version: 0.4.2\n"),
+            toc_version("## Interface: 20506\n## Version: 0.4.2\n"),
             Some(version("0.4.2"))
         );
         assert_eq!(

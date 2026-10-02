@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Writes addon/tests/api.lua and addon/tests/api-signatures.lua, the API of the WoW
-# Forever client that the addon uses (SPEC.md 7.8). The tests and the lint check use
+# TBC Anniversary client that the addon uses (SPEC.md 7.8). The tests and the lint check use
 # them, so a call to a function that the client does not have fails here, not in the game.
 #
 # With no argument it uses the pinned commits below. `--latest` uses the newest
-# commit of each `forever` branch: the nightly job does this to find client patches.
+# commit of each `classic_anniversary` branch: the nightly job does this to find client patches.
 #
 # Another addon repo runs this script from its own root with its own paths:
 #   wow-api.sh [--latest] --addon <folder> [--addon <folder>]... [--lint <wow.yml>]
@@ -14,9 +14,9 @@
 set -euo pipefail
 
 UI_REPO=https://github.com/Gethe/wow-ui-source
-UI_COMMIT=966519cf0ad2c10301ea011a88c14b25697c9687 # forever, 1.60.1.70124
+UI_COMMIT=1463c686270b6c64e2c5c228f447c4597c0f8ba6 # classic_anniversary, 2.5.6.69795
 BIR_REPO=https://github.com/Ketho/BlizzardInterfaceResources
-BIR_COMMIT=4149af6437af8631d045f3c6add51555fba3d784 # forever, 1.60.1.70009
+BIR_COMMIT=d6d4a8f445f198c5c73ff5f8f5002ad8f04451e4 # classic_anniversary, 2.5.6 (68575)
 
 scripts=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 root=$(git rev-parse --show-toplevel)
@@ -31,7 +31,7 @@ signatures=""
 custom=no
 while [ $# -gt 0 ]; do
   case $1 in
-    --latest) UI_COMMIT=forever BIR_COMMIT=forever ;;
+    --latest) UI_COMMIT=classic_anniversary BIR_COMMIT=classic_anniversary ;;
     --addon) addons+=("$2"); custom=yes; shift ;;
     --lint) lint=$2; custom=yes; shift ;;
     --fake) fake=$2; custom=yes; shift ;;
@@ -69,7 +69,7 @@ fetch "$work/ui" "$UI_REPO" "$UI_COMMIT"
 fetch "$work/bir" "$BIR_REPO" "$BIR_COMMIT"
 build=$(tr -d '[:space:]' < "$work/ui/version.txt")
 
-# The TOC Interface number of 1.60.1 is 16001: major * 10000 + minor * 100 + patch.
+# The TOC Interface number of 2.5.6 is 20506: major * 10000 + minor * 100 + patch.
 IFS=. read -r major minor patch _ <<< "$build"
 interface=$((major * 10000 + minor * 100 + patch))
 for folder in "${addons[@]}"; do

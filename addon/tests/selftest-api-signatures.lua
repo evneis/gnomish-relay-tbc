@@ -1,26 +1,23 @@
--- The documented WoW Forever 1.60.1.70124 API that GnomishRelaySelfTest, GnomishRelaySelfTest_Off, GnomishRelaySelfTest_Slot uses.
+-- The documented WoW TBC Anniversary 2.5.6.69795 API that GnomishRelaySelfTest, GnomishRelaySelfTest_Off, GnomishRelaySelfTest_Slot uses.
 -- Written by scripts/wow-api.sh from Blizzard_APIDocumentationGenerated. Do not edit.
 -- A patch can change the arguments, returns, or secret flags and keep the name. The diff shows it.
 -- The scan does not know the type of each object, so methods has each widget type with a called name.
 return {
-	build = "1.60.1.70124",
+	build = "2.5.6.69795",
 	functions = {
 		["C_AddOns.DisableAddOn"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "name", Type = "uiAddon", Nilable = false },
 				{ Name = "character", Type = "cstring", Nilable = false, Default = "0" },
 			},
 		},
 		["C_AddOns.EnableAddOn"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "name", Type = "uiAddon", Nilable = false },
 				{ Name = "character", Type = "cstring", Nilable = false, Default = "0" },
 			},
 		},
 		["C_AddOns.GetAddOnInfo"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "name", Type = "uiAddon", Nilable = false },
 			},
@@ -34,7 +31,6 @@ return {
 			},
 		},
 		["C_AddOns.IsAddOnLoaded"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "name", Type = "uiAddon", Nilable = false },
 			},
@@ -44,7 +40,6 @@ return {
 			},
 		},
 		["C_AddOns.LoadAddOn"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "name", Type = "uiAddon", Nilable = false },
 			},
@@ -54,7 +49,6 @@ return {
 			},
 		},
 		["C_CVar.GetCVar"] = {
-			SecretArguments = "NotAllowed",
 			Arguments = {
 				{ Name = "name", Type = "cstring", Nilable = false },
 			},
@@ -63,13 +57,13 @@ return {
 			},
 		},
 		["C_CVar.SetCVar"] = {
-			RequiresNonReadOnlyCVar = true,
-			RequiresNonSecureCVar = true,
-			RequiresValidAndPublicCVar = true,
-			SecretArguments = "NotAllowed",
+			IsNotReadOnly = true,
+			IsNotSecure = true,
+			IsValidAndPublic = true,
 			Arguments = {
 				{ Name = "name", Type = "cstring", Nilable = false },
 				{ Name = "value", Type = "cstring", Nilable = true },
+				{ Name = "scriptCVar", Type = "cstring", Nilable = true },
 			},
 			Returns = {
 				{ Name = "success", Type = "bool", Nilable = false },
@@ -81,14 +75,12 @@ return {
 			},
 		},
 		["C_Timer.After"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "seconds", Type = "number", Nilable = false },
 				{ Name = "callback", Type = "TimerCallback", Nilable = false },
 			},
 		},
 		["C_Timer.NewTicker"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "seconds", Type = "number", Nilable = false },
 				{ Name = "callback", Type = "TickerCallback", Nilable = false },
@@ -103,21 +95,6 @@ return {
 				{ Name = "framerate", Type = "number", Nilable = false },
 			},
 		},
-		GetScreenHeight = {
-			Returns = {
-				{ Name = "height", Type = "number", Nilable = false },
-			},
-		},
-		GetScreenWidth = {
-			Returns = {
-				{ Name = "width", Type = "number", Nilable = false },
-			},
-		},
-		GetServerTime = {
-			Returns = {
-				{ Name = "time", Type = "number", Nilable = false },
-			},
-		},
 		GetTimePreciseSec = {
 			Returns = {
 				{ Name = "time", Type = "number", Nilable = false },
@@ -125,8 +102,6 @@ return {
 		},
 		UnitDetailedThreatSituation = {
 			MayReturnNothing = true,
-			SecretArguments = "AllowedWhenUntainted",
-			SecretWhenUnitThreatValuesRestricted = true,
 			Arguments = {
 				{ Name = "unit", Type = "UnitToken", Nilable = false },
 				{ Name = "mobGUID", Type = "UnitToken", Nilable = false },
@@ -140,7 +115,6 @@ return {
 			},
 		},
 		UnitExists = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "unit", Type = "UnitToken", Nilable = true },
 			},
@@ -149,8 +123,6 @@ return {
 			},
 		},
 		UnitGroupRolesAssigned = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretWhenUnitIdentityRestricted = true,
 			Arguments = {
 				{ Name = "unit", Type = "UnitToken", Nilable = true },
 			},
@@ -159,8 +131,6 @@ return {
 			},
 		},
 		UnitHealth = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretReturns = true,
 			Arguments = {
 				{ Name = "unit", Type = "UnitTokenPvPRestrictedForAddOns", Nilable = false },
 				{ Name = "usePredicted", Type = "bool", Nilable = false, Default = true },
@@ -170,8 +140,6 @@ return {
 			},
 		},
 		UnitName = {
-			SecretArguments = "AllowedWhenTainted",
-			SecretWhenUnitNameIdentityRestricted = true,
 			Arguments = {
 				{ Name = "unit", Type = "UnitToken", Nilable = false },
 			},
@@ -181,8 +149,6 @@ return {
 			},
 		},
 		UnitPower = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretWhenUnitPowerRestricted = true,
 			Arguments = {
 				{ Name = "unitToken", Type = "UnitTokenPvPRestrictedForAddOns", Nilable = false },
 				{ Name = "powerType", Type = "PowerType", Nilable = true },
@@ -193,7 +159,6 @@ return {
 			},
 		},
 		issecretvalue = {
-			SecretArguments = "AllowedWhenUntainted",
 			SecureHooksAllowed = false,
 			Arguments = {
 				{ Name = "value", Type = "LuaValueReference", Nilable = false },
@@ -214,14 +179,11 @@ return {
 			Arguments = {},
 		},
 		["FrameAPIModelSceneFrameActorBase:SetAlpha"] = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Alpha },
 			Arguments = {
 				{ Name = "alpha", Type = "number", Nilable = false },
 			},
 		},
 		["FrameAPIModelSceneFrameActorBase:SetScale"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "scale", Type = "number", Nilable = false },
 			},
@@ -230,59 +192,39 @@ return {
 			Arguments = {},
 		},
 		["FrameAPITooltip:SetText"] = {
-			SecretArguments = "AllowedWhenTainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Text },
 			Arguments = {
-				{ Name = "text", Type = "cstring", Nilable = false, ConditionalSecret = true },
+				{ Name = "text", Type = "cstring", Nilable = false },
 				{ Name = "colorR", Type = "number", Nilable = false },
 				{ Name = "colorG", Type = "number", Nilable = false },
 				{ Name = "colorB", Type = "number", Nilable = false },
-				{ Name = "alpha", Type = "number", Nilable = false, ConditionalSecret = true, Default = 1 },
-				{ Name = "wrap", Type = "bool", Nilable = false, ConditionalSecret = true, Default = false },
+				{ Name = "alpha", Type = "number", Nilable = false, Default = 1 },
+				{ Name = "wrap", Type = "bool", Nilable = false, Default = false },
 			},
 		},
 		["SimpleAnimAPI:HookScript"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.ScriptBindings } },
-			RequiresAssignableScript = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
-				{ Name = "scriptTypeName", Type = "ScriptTypeName", Nilable = false },
-				{ Name = "script", Type = "LuaFunctionReference", Nilable = false },
-				{ Name = "bindingType", Type = "ScriptBindingType", Nilable = false, Default = "Extrinsic" },
-			},
-			Returns = {
-				{ Name = "success", Type = "bool", Nilable = false },
+				{ Name = "scriptTypeName", Type = "cstring", Nilable = false },
+				{ Name = "script", Type = "luaFunction", Nilable = false },
+				{ Name = "bindingType", Type = "number", Nilable = true },
 			},
 		},
 		["SimpleAnimAPI:SetScript"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.ScriptBindings } },
-			RequiresAssignableScript = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
-				{ Name = "scriptTypeName", Type = "ScriptTypeName", Nilable = false },
-				{ Name = "script", Type = "LuaFunctionReference", Nilable = true },
+				{ Name = "scriptTypeName", Type = "cstring", Nilable = false },
+				{ Name = "script", Type = "luaFunction", Nilable = true },
 			},
 		},
 		["SimpleAnimGroupAPI:HookScript"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.ScriptBindings } },
-			RequiresAssignableScript = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
-				{ Name = "scriptTypeName", Type = "ScriptTypeName", Nilable = false },
-				{ Name = "script", Type = "LuaFunctionReference", Nilable = false },
-				{ Name = "bindingType", Type = "ScriptBindingType", Nilable = false, Default = "Extrinsic" },
-			},
-			Returns = {
-				{ Name = "success", Type = "bool", Nilable = false },
+				{ Name = "scriptTypeName", Type = "cstring", Nilable = false },
+				{ Name = "script", Type = "luaFunction", Nilable = false },
+				{ Name = "bindingType", Type = "number", Nilable = true },
 			},
 		},
 		["SimpleAnimGroupAPI:SetScript"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.ScriptBindings } },
-			RequiresAssignableScript = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
-				{ Name = "scriptTypeName", Type = "ScriptTypeName", Nilable = false },
-				{ Name = "script", Type = "LuaFunctionReference", Nilable = true },
+				{ Name = "scriptTypeName", Type = "cstring", Nilable = false },
+				{ Name = "script", Type = "luaFunction", Nilable = true },
 			},
 		},
 		["SimpleAnimScaleAPI:GetScale"] = {
@@ -293,15 +235,12 @@ return {
 			},
 		},
 		["SimpleAnimScaleAPI:SetScale"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "scaleX", Type = "number", Nilable = false },
 				{ Name = "scaleY", Type = "number", Nilable = false },
 			},
 		},
 		["SimpleButtonAPI:SetText"] = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Text },
 			Arguments = {
 				{ Name = "text", Type = "cstring", Nilable = false, Default = "" },
 			},
@@ -309,7 +248,6 @@ return {
 		["SimpleEditBoxAPI:SetFont"] = {
 			RequiresValidFontAsset = true,
 			RequiresValidFontHeight = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "fontFile", Type = "cstring", Nilable = false },
 				{ Name = "height", Type = "uiFontHeight", Nilable = false },
@@ -320,14 +258,11 @@ return {
 			},
 		},
 		["SimpleEditBoxAPI:SetText"] = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Text },
 			Arguments = {
 				{ Name = "text", Type = "cstring", Nilable = false },
 			},
 		},
 		["SimpleFontAPI:SetAlpha"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "alpha", Type = "SingleColorValue", Nilable = false },
 			},
@@ -335,7 +270,6 @@ return {
 		["SimpleFontAPI:SetFont"] = {
 			RequiresValidFontAsset = true,
 			RequiresValidFontHeight = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "fontFile", Type = "cstring", Nilable = false },
 				{ Name = "height", Type = "uiFontHeight", Nilable = false },
@@ -343,14 +277,12 @@ return {
 			},
 		},
 		["SimpleFontStringAPI:GetStringHeight"] = {
-			SecretWhenAnchoringSecret = true,
 			Arguments = {},
 			Returns = {
 				{ Name = "height", Type = "uiUnit", Nilable = false },
 			},
 		},
 		["SimpleFontStringAPI:GetUnboundedStringWidth"] = {
-			SecretWhenAnchoringSecret = true,
 			Arguments = {},
 			Returns = {
 				{ Name = "width", Type = "uiUnit", Nilable = false },
@@ -359,7 +291,6 @@ return {
 		["SimpleFontStringAPI:SetFont"] = {
 			RequiresValidFontAsset = true,
 			RequiresValidFontHeight = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "fontFile", Type = "FontAsset", Nilable = false },
 				{ Name = "fontHeight", Type = "uiFontHeight", Nilable = false },
@@ -370,14 +301,11 @@ return {
 			},
 		},
 		["SimpleFontStringAPI:SetText"] = {
-			SecretArguments = "AllowedWhenTainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Text },
 			Arguments = {
 				{ Name = "text", Type = "cstring", Nilable = false, Default = "" },
 			},
 		},
 		["SimpleFrameAPI:CreateFontString"] = {
-			SecretArguments = "NotAllowed",
 			Arguments = {
 				{ Name = "name", Type = "cstring", Nilable = true },
 				{ Name = "drawLayer", Type = "DrawLayer", Nilable = true },
@@ -388,7 +316,6 @@ return {
 			},
 		},
 		["SimpleFrameAPI:CreateTexture"] = {
-			SecretArguments = "NotAllowed",
 			Arguments = {
 				{ Name = "name", Type = "cstring", Nilable = true },
 				{ Name = "drawLayer", Type = "DrawLayer", Nilable = true },
@@ -400,14 +327,12 @@ return {
 			},
 		},
 		["SimpleFrameAPI:GetEffectiveScale"] = {
-			SecretReturnsForAspect = { Enum.SecretAspect.Scale },
 			Arguments = {},
 			Returns = {
 				{ Name = "effectiveScale", Type = "number", Nilable = false },
 			},
 		},
 		["SimpleFrameAPI:GetScale"] = {
-			SecretReturnsForAspect = { Enum.SecretAspect.Scale },
 			Arguments = {},
 			Returns = {
 				{ Name = "frameScale", Type = "number", Nilable = false },
@@ -418,9 +343,6 @@ return {
 			Arguments = {},
 		},
 		["SimpleFrameAPI:RegisterEvent"] = {
-			AddsForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.EventRegistrations } },
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.EventRegistrations } },
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "eventName", Type = "cstring", Nilable = false },
 			},
@@ -429,38 +351,30 @@ return {
 			},
 		},
 		["SimpleFrameAPI:SetAlpha"] = {
-			SecretArguments = "AllowedWhenTainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Alpha },
 			Arguments = {
 				{ Name = "alpha", Type = "SingleColorValue", Nilable = false },
 			},
 		},
 		["SimpleFrameAPI:SetFrameLevel"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.FrameLevel },
 			Arguments = {
 				{ Name = "frameLevel", Type = "number", Nilable = false },
 			},
 		},
 		["SimpleFrameAPI:SetFrameStrata"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "NotAllowed",
 			Arguments = {
 				{ Name = "strata", Type = "FrameStrata", Nilable = false },
 			},
 		},
 		["SimpleFrameAPI:SetIgnoreParentScale"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "NotAllowed",
 			Arguments = {
 				{ Name = "ignore", Type = "bool", Nilable = false },
 			},
 		},
 		["SimpleFrameAPI:SetScale"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Scale },
 			Arguments = {
 				{ Name = "scale", Type = "number", Nilable = false },
 			},
@@ -478,7 +392,6 @@ return {
 		["SimpleHTMLAPI:SetFont"] = {
 			RequiresValidFontAsset = true,
 			RequiresValidFontHeight = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "textType", Type = "HTMLTextType", Nilable = false },
 				{ Name = "fontFile", Type = "cstring", Nilable = false },
@@ -487,8 +400,6 @@ return {
 			},
 		},
 		["SimpleHTMLAPI:SetText"] = {
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Text },
 			Arguments = {
 				{ Name = "text", Type = "cstring", Nilable = false },
 				{ Name = "ignoreMarkup", Type = "bool", Nilable = false, Default = false },
@@ -497,7 +408,6 @@ return {
 		["SimpleMessageFrameAPI:SetFont"] = {
 			RequiresValidFontAsset = true,
 			RequiresValidFontHeight = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "fontFile", Type = "cstring", Nilable = false },
 				{ Name = "height", Type = "uiFontHeight", Nilable = false },
@@ -505,37 +415,30 @@ return {
 			},
 		},
 		["SimpleRegionAPI:GetEffectiveScale"] = {
-			SecretReturnsForAspect = { Enum.SecretAspect.Scale },
 			Arguments = {},
 			Returns = {
 				{ Name = "effectiveScale", Type = "number", Nilable = false },
 			},
 		},
 		["SimpleRegionAPI:GetScale"] = {
-			SecretReturnsForAspect = { Enum.SecretAspect.Scale },
 			Arguments = {},
 			Returns = {
 				{ Name = "scale", Type = "number", Nilable = false },
 			},
 		},
 		["SimpleRegionAPI:SetAlpha"] = {
-			SecretArguments = "AllowedWhenTainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Alpha },
 			Arguments = {
 				{ Name = "alpha", Type = "SingleColorValue", Nilable = false },
 			},
 		},
 		["SimpleRegionAPI:SetIgnoreParentScale"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "NotAllowed",
 			Arguments = {
 				{ Name = "ignore", Type = "bool", Nilable = false },
 			},
 		},
 		["SimpleRegionAPI:SetScale"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "AllowedWhenUntainted",
-			SecretArgumentsAddAspect = { Enum.SecretAspect.Scale },
 			Arguments = {
 				{ Name = "scale", Type = "number", Nilable = false },
 			},
@@ -544,34 +447,23 @@ return {
 			Arguments = {},
 		},
 		["SimpleScriptRegionAPI:HookScript"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.ScriptBindings } },
-			RequiresAssignableScript = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
-				{ Name = "scriptTypeName", Type = "ScriptTypeName", Nilable = false },
-				{ Name = "script", Type = "LuaFunctionReference", Nilable = false },
-				{ Name = "bindingType", Type = "ScriptBindingType", Nilable = false, Default = "Extrinsic" },
-			},
-			Returns = {
-				{ Name = "success", Type = "bool", Nilable = false },
+				{ Name = "scriptTypeName", Type = "cstring", Nilable = false },
+				{ Name = "script", Type = "luaFunction", Nilable = false },
+				{ Name = "bindingType", Type = "number", Nilable = true },
 			},
 		},
 		["SimpleScriptRegionAPI:SetScript"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.ScriptBindings } },
-			RequiresAssignableScript = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
-				{ Name = "scriptTypeName", Type = "ScriptTypeName", Nilable = false },
-				{ Name = "script", Type = "LuaFunctionReference", Nilable = true },
+				{ Name = "scriptTypeName", Type = "cstring", Nilable = false },
+				{ Name = "script", Type = "luaFunction", Nilable = true },
 			},
 		},
 		["SimpleScriptRegionAPI:Show"] = {
 			Arguments = {},
 		},
 		["SimpleScriptRegionResizingAPI:SetPoint"] = {
-			CheckAllowInheritForbiddenLayoutAspects = true,
 			IsProtectedFunction = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "point", Type = "FramePoint", Nilable = false },
 				{ Name = "relativeTo", Type = "ScriptRegion", Nilable = false },
@@ -582,7 +474,6 @@ return {
 		},
 		["SimpleScriptRegionResizingAPI:SetSize"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "x", Type = "uiUnit", Nilable = false },
 				{ Name = "y", Type = "uiUnit", Nilable = false },
@@ -590,14 +481,11 @@ return {
 		},
 		["SimpleScriptRegionResizingAPI:SetWidth"] = {
 			IsProtectedFunction = true,
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "width", Type = "uiUnit", Nilable = false },
 			},
 		},
 		["SimpleTextureBaseAPI:SetColorTexture"] = {
-			ChecksForbiddenAspects = { { Argument = "self", Aspect = Enum.ForbiddenAspect.SetTexture } },
-			SecretArguments = "AllowedWhenTainted",
 			Arguments = {
 				{ Name = "colorR", Type = "number", Nilable = false },
 				{ Name = "colorG", Type = "number", Nilable = false },
@@ -606,7 +494,6 @@ return {
 			},
 		},
 		["SimpleTextureBaseAPI:SetSnapToPixelGrid"] = {
-			SecretArguments = "AllowedWhenUntainted",
 			Arguments = {
 				{ Name = "snap", Type = "bool", Nilable = false, Default = false },
 			},
@@ -652,6 +539,9 @@ return {
 		},
 	},
 	undocumented = {
+		"GetScreenHeight",
+		"GetScreenWidth",
+		"GetServerTime",
 		"IsInGroup",
 		"bit.band",
 		"bit.bnot",
